@@ -1,6 +1,6 @@
 // !!! IMPORTANTE !!!
 // Cole aqui o link da sua planilha publicada como .csv
-const urlPlanilha = 'URL_DA_SUA_PLANILHA_CSV_AQUI';
+const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTRm6lEWk_MP0PSDmMNOpHwmu7fiQM4TisoWz78fkEkG_nsG-aeOoU-yKq4IEM9TUFwcPVdE93dKum0/pub?output=csv';
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
