@@ -1,6 +1,6 @@
 // !!! IMPORTANTE !!!
 // Cole aqui o link da sua planilha publicada como .csv
-const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSY4dC1HzzRyH4YlSJGFW6H8ACLL0HlpTyV3aQTPbimBVDTR6bJUlCTvDdHKlMuJZL9n17GAmpXDEU8/pub?output=csv';
+const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTRm6lEWk_MP0PSDmMNOpHwmu7fiQM4TisoWz78fkEkG_nsG-aeOoU-yKq4IEM9TUFwcPVdE93dKum0/pub?output=csv';
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
