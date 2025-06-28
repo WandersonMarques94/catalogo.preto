@@ -21,19 +21,18 @@ async function carregarDados() {
 }
 
 function processarDados(csvData) {
-    const linhas = csvData.trim().split('\n').slice(1); // Pula o cabeçalho
+    const linhas = csvData.trim().split('\n').slice(1);
     return linhas.map(linha => {
-        // Usa uma expressão regular para tratar células vazias ou com espaços
         const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         if (colunas.length < 5) return null;
         return {
             marca: colunas[0]?.trim() || 'Sem Marca',
             tipo: colunas[1]?.trim() || 'Outros',
             modelo: colunas[2]?.trim() || '',
-            detalhes: colunas[3]?.trim() || '', // Detalhes / Qualidade
+            detalhes: colunas[3]?.trim() || '',
             preco: colunas[4]?.trim() || '0'
         };
-    }).filter(item => item && item.modelo); // Filtra linhas inválidas ou sem modelo
+    }).filter(item => item && item.modelo);
 }
 
 function renderizarPagina(itens) {
@@ -42,7 +41,6 @@ function renderizarPagina(itens) {
     containerLista.innerHTML = '';
     containerBotoes.innerHTML = '';
 
-    // Agrupa primeiro por marca
     const porMarca = itens.reduce((acc, item) => {
         (acc[item.marca] = acc[item.marca] || []).push(item);
         return acc;
@@ -52,36 +50,43 @@ function renderizarPagina(itens) {
 
     marcas.forEach(marca => {
         const idMarca = `marca-${marca.replace(/\s+/g, '-').toLowerCase()}`;
-        
-        // Cria botão da marca
+
         const botao = document.createElement('a');
         botao.href = `#${idMarca}`;
         botao.className = 'botao-marca';
         botao.textContent = marca;
         containerBotoes.appendChild(botao);
+
+        // --- MUDANÇA 1: Container para a marca inteira ---
+        const marcaContainer = document.createElement('div');
+        marcaContainer.className = 'marca-container';
+        marcaContainer.id = `container-${idMarca}`;
         
-        // Cria título principal da marca
         const tituloMarca = document.createElement('h2');
         tituloMarca.className = 'marca-titulo';
         tituloMarca.id = idMarca;
         tituloMarca.textContent = marca;
-        containerLista.appendChild(tituloMarca);
+        marcaContainer.appendChild(tituloMarca);
         
-        // Agora, agrupa os itens dessa marca por tipo de peça
         const porTipo = porMarca[marca].reduce((acc, item) => {
             (acc[item.tipo] = acc[item.tipo] || []).push(item);
             return acc;
         }, {});
         
-        const tipos = Object.keys(porTipo).sort();
+        // --- MUDANÇA 2: Lógica para ordenar "Telas" primeiro ---
+        const tipos = Object.keys(porTipo).sort((a, b) => {
+            if (a.toLowerCase() === 'telas' || a.toLowerCase() === 'tela') return -1;
+            if (b.toLowerCase() === 'telas' || b.toLowerCase() === 'tela') return 1;
+            return a.localeCompare(b);
+        });
         
         tipos.forEach(tipo => {
-            // Cria a tabela para este tipo de peça
             const table = document.createElement('table');
+            // Adicionando a classe .tipo-titulo para o destaque no CSS
             table.innerHTML = `
                 <thead>
                     <tr>
-                        <th colspan="3">${tipo}</th>
+                        <th colspan="3" class="tipo-titulo">${tipo}</th>
                     </tr>
                     <tr>
                         <th>Modelo</th>
@@ -99,33 +104,41 @@ function renderizarPagina(itens) {
                 `).join('')}
                 </tbody>
             `;
-            containerLista.appendChild(table);
+            marcaContainer.appendChild(table);
         });
+        containerLista.appendChild(marcaContainer);
     });
 }
 
+// --- MUDANÇA 3: Nova função de busca ---
 function filtrarTabela() {
     const input = document.getElementById('searchInput');
     const filtro = input.value.toUpperCase();
-    const tabelas = document.querySelectorAll('table');
+    const containersDeMarca = document.querySelectorAll('.marca-container');
 
-    tabelas.forEach(table => {
-        const trs = table.getElementsByTagName('tr');
-        let algumaLinhaVisivelNaTabela = false;
-        for (let i = 2; i < trs.length; i++) { // Começa em 2 para pular os dois cabeçalhos
-            const textoLinha = trs[i].textContent || trs[i].innerText;
-            if (textoLinha.toUpperCase().indexOf(filtro) > -1) {
-                trs[i].style.display = "";
-                algumaLinhaVisivelNaTabela = true;
-            } else {
-                trs[i].style.display = "none";
+    containersDeMarca.forEach(container => {
+        let algumResultadoNaMarca = false;
+        const tabelas = container.querySelectorAll('table');
+
+        tabelas.forEach(table => {
+            const trs = table.getElementsByTagName('tr');
+            let algumaLinhaVisivelNaTabela = false;
+
+            for (let i = 2; i < trs.length; i++) {
+                const textoLinha = trs[i].textContent || trs[i].innerText;
+                if (textoLinha.toUpperCase().indexOf(filtro) > -1) {
+                    trs[i].style.display = "";
+                    algumaLinhaVisivelNaTabela = true;
+                    algumResultadoNaMarca = true;
+                } else {
+                    trs[i].style.display = "none";
+                }
             }
-        }
-        // Esconde a tabela inteira se nenhum item corresponder à busca
-        if (algumaLinhaVisivelNaTabela) {
-            table.style.display = "";
-        } else {
-            table.style.display = "none";
-        }
+            // Esconde a tabela se ela não tiver nenhum resultado
+            table.style.display = algumaLinhaVisivelNaTabela ? "" : "none";
+        });
+
+        // Esconde o container INTEIRO da marca (incluindo o título H2) se não houver resultados
+        container.style.display = algumResultadoNaMarca ? "" : "none";
     });
 }
