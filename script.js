@@ -146,6 +146,6 @@ function handleScroll() {
     if (window.scrollY > 300) {
         backToTopButton.classList.add('visible');
     } else {
-        backTotoTopButton.classList.remove('visible');
+        backToTopButton.classList.remove('visible');
     }
 }
