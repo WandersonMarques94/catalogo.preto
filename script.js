@@ -3,6 +3,7 @@ const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTRm6lEWk_M
 
 // Elementos da página
 const loadingIndicator = document.getElementById('loading-indicator');
+const backToTopButton = document.getElementById('back-to-top');
 const searchInput = document.getElementById('searchInput');
 
 // Elementos do Modal
@@ -14,34 +15,87 @@ const clearFiltersBtn = document.getElementById('clear-filters-btn');
 const brandFiltersContainer = document.getElementById('modal-brand-filters');
 const typeFiltersContainer = document.getElementById('modal-type-filters');
 
+// Variáveis de estado do filtro
 let filtroAtivoMarca = 'todas';
 let filtroAtivoTipo = 'todas';
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
     setupModalListeners();
-    // Outros listeners como o de scroll podem ser adicionados aqui
+    window.addEventListener('scroll', handleScroll);
 });
 
 async function carregarDados() {
-    // ... (função não muda)
+    loadingIndicator.style.display = 'flex';
+    try {
+        const response = await fetch(urlPlanilha);
+        if (!response.ok) throw new Error('Erro ao buscar dados');
+        const data = await response.text();
+        const itens = processarDados(data);
+        renderizarPagina(itens);
+        popularFiltros(itens);
+    } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        loadingIndicator.innerHTML = '<p>Ocorreu um erro ao carregar os dados.</p>';
+    }
 }
+
 function processarDados(csvData) {
-    // ... (função não muda)
+    const linhas = csvData.trim().split(/\r?\n/).slice(1);
+    return linhas.map(linha => {
+        const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        if (colunas.length < 5) return null;
+        return {
+            marca: colunas[0]?.trim() || 'Sem Marca',
+            tipo: colunas[1]?.trim() || 'Outros',
+            modelo: colunas[2]?.trim() || '',
+            detalhes: colunas[3]?.trim() || '',
+            preco: colunas[4]?.trim() || '0'
+        };
+    }).filter(item => item && item.marca && item.modelo);
 }
+
 function renderizarPagina(itens) {
-    // ... (função não muda)
+    const containerLista = document.getElementById('lista-container');
+    containerLista.innerHTML = '';
+    loadingIndicator.style.display = 'none';
+    const fragmentoLista = document.createDocumentFragment();
+    const porMarca = itens.reduce((acc, item) => { (acc[item.marca] = acc[item.marca] || []).push(item); return acc; }, {});
+    const marcas = Object.keys(porMarca).sort();
+    marcas.forEach(marca => {
+        const marcaContainer = document.createElement('div');
+        marcaContainer.className = 'marca-container';
+        marcaContainer.dataset.marca = marca;
+        const tituloMarca = document.createElement('h2');
+        tituloMarca.className = 'marca-titulo';
+        tituloMarca.textContent = marca;
+        marcaContainer.appendChild(tituloMarca);
+        const porTipo = porMarca[marca].reduce((acc, item) => { (acc[item.tipo] = acc[item.tipo] || []).push(item); return acc; }, {});
+        const tipos = Object.keys(porTipo).sort((a, b) => {
+            if (a.toLowerCase().includes('tela')) return -1;
+            if (b.toLowerCase().includes('tela')) return 1;
+            return a.localeCompare(b);
+        });
+        tipos.forEach(tipo => {
+            const table = document.createElement('table');
+            table.dataset.tipo = tipo;
+            table.innerHTML = `<thead><tr><th colspan="3" class="tipo-titulo">${tipo}</th></tr><tr><th>Modelo</th><th>Detalhes / Qualidade</th><th>Preço (R$)</th></tr></thead><tbody>${porTipo[tipo].map(item => `<tr><td>${item.modelo}</td><td>${item.detalhes}</td><td>${item.preco}</td></tr>`).join('')}</tbody>`;
+            marcaContainer.appendChild(table);
+        });
+        fragmentoLista.appendChild(marcaContainer);
+    });
+    containerLista.appendChild(fragmentoLista);
 }
 
 function popularFiltros(itens) {
-    // Esta função agora popula os botões DENTRO do modal
-    const marcas = ['todas', ...new Set(itens.map(item => item.marca))].sort((a,b) => a === 'todas' ? -1 : a.localeCompare(b));
-    const tipos = ['todas', ...new Set(itens.map(item => item.tipo))].sort((a,b) => a === 'todas' ? -1 : a.localeCompare(b));
+    const marcasUnicas = [...new Set(itens.map(item => item.marca))];
+    const marcas = marcasUnicas.length > 0 ? ['todas', ...marcasUnicas.sort()] : [];
+    const tiposUnicos = [...new Set(itens.map(item => item.tipo))];
+    const tipos = tiposUnicos.length > 0 ? ['todas', ...tiposUnicos.sort()] : [];
 
     brandFiltersContainer.innerHTML = marcas.map(marca => 
         `<button class="filter-pill ${marca === 'todas' ? 'active' : ''}" data-filter="${marca}">${marca === 'todas' ? 'Todas as Marcas' : marca}</button>`
     ).join('');
-
     typeFiltersContainer.innerHTML = tipos.map(tipo =>
         `<button class="filter-pill ${tipo === 'todas' ? 'active' : ''}" data-filter="${tipo}">${tipo === 'todas' ? 'Todos os Tipos' : tipo}</button>`
     ).join('');
@@ -62,7 +116,6 @@ function setupModalListeners() {
             e.target.classList.add('active');
         }
     });
-
     typeFiltersContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-pill')) {
             typeFiltersContainer.querySelector('.active').classList.remove('active');
@@ -74,30 +127,68 @@ function setupModalListeners() {
         filtroAtivoMarca = brandFiltersContainer.querySelector('.active').dataset.filter;
         filtroAtivoTipo = typeFiltersContainer.querySelector('.active').dataset.filter;
         aplicarTodosOsFiltros();
-        filterModal.style.display = 'none'; // Fecha o modal após aplicar
+        filterModal.style.display = 'none';
     });
-
     clearFiltersBtn.addEventListener('click', () => {
-        // Reseta os botões para o padrão 'todas'
         brandFiltersContainer.querySelector('.active').classList.remove('active');
         brandFiltersContainer.querySelector('[data-filter="todas"]').classList.add('active');
         typeFiltersContainer.querySelector('.active').classList.remove('active');
         typeFiltersContainer.querySelector('[data-filter="todas"]').classList.add('active');
-        
-        // Aplica e fecha
         filtroAtivoMarca = 'todas';
         filtroAtivoTipo = 'todas';
         aplicarTodosOsFiltros();
         filterModal.style.display = 'none';
     });
-
     searchInput.addEventListener('keyup', aplicarTodosOsFiltros);
 }
 
+// ==================================================================
+// FUNÇÃO DE FILTRAGEM REESCRITA E CORRIGIDA
+// ==================================================================
 function aplicarTodosOsFiltros() {
-    // A lógica de filtragem em si não muda
-    // ...
+    const buscaTexto = searchInput.value.toUpperCase();
+    document.querySelectorAll('.marca-container').forEach(containerMarca => {
+        const marcaAtual = containerMarca.dataset.marca;
+        let marcaTemItensVisiveis = false;
+
+        const marcaPassaFiltro = (filtroAtivoMarca === 'todas' || marcaAtual === filtroAtivoMarca);
+
+        if (marcaPassaFiltro) {
+            containerMarca.querySelectorAll('table').forEach(tabelaTipo => {
+                const tipoAtual = tabelaTipo.dataset.tipo;
+                let tipoTemItensVisiveis = false;
+                
+                // CORREÇÃO DA LÓGICA DO FILTRO DE TIPO
+                const tipoPassaFiltro = (filtroAtivoTipo === 'todas' || tipoAtual === filtroAtivoTipo);
+
+                if (tipoPassaFiltro) {
+                    tabelaTipo.querySelectorAll('tbody tr').forEach(linha => {
+                        const textoLinha = linha.textContent.toUpperCase();
+                        if (textoLinha.includes(buscaTexto)) {
+                            linha.style.display = "";
+                            tipoTemItensVisiveis = true;
+                        } else {
+                            linha.style.display = "none";
+                        }
+                    });
+                }
+
+                if (tipoTemItensVisiveis) {
+                    tabelaTipo.style.display = "";
+                    marcaTemItensVisiveis = true;
+                } else {
+                    tabelaTipo.style.display = "none";
+                }
+            });
+        }
+        containerMarca.style.display = marcaTemItensVisiveis ? "" : "none";
+    });
 }
 
-// O resto do código (funções de carregar, processar, renderizar, filtrar, scroll) pode ser colado aqui das versões anteriores.
-// Cole o código completo abaixo para garantir.
+function handleScroll() {
+    if (window.scrollY > 300) {
+        backToTopButton.classList.add('visible');
+    } else {
+        backToTopButton.classList.remove('visible');
+    }
+}
