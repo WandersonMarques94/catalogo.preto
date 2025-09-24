@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarDados() {
-    // ... (função carregarDados não muda)
     loadingIndicator.style.display = 'flex';
     try {
         const response = await fetch(urlPlanilha);
@@ -28,12 +27,13 @@ async function carregarDados() {
         renderizarPagina(itens);
         popularFiltros(itens);
         setupEventListeners();
-    } catch (error) { console.error("Erro:", error); } 
-    finally { loadingIndicator.style.display = 'none'; }
+    } catch (error) { 
+        console.error("Erro ao carregar dados:", error);
+        loadingIndicator.innerHTML = '<p>Ocorreu um erro ao carregar os dados. Verifique o console para mais detalhes.</p>';
+    } 
 }
 
 function processarDados(csvData) {
-    // ... (função processarDados não muda)
     const linhas = csvData.trim().split(/\r?\n/).slice(1);
     return linhas.map(linha => {
         const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -48,31 +48,44 @@ function processarDados(csvData) {
     }).filter(item => item && item.marca && item.modelo);
 }
 
+
+// ==================================================================
+// FUNÇÃO CORRIGIDA ESTÁ AQUI
+// ==================================================================
 function renderizarPagina(itens) {
-    // ... (função renderizarPagina não muda)
     const containerLista = document.getElementById('lista-container');
     containerLista.innerHTML = '';
+    loadingIndicator.style.display = 'none'; // Esconde o loading aqui
     const fragmentoLista = document.createDocumentFragment();
+
     const porMarca = itens.reduce((acc, item) => { (acc[item.marca] = acc[item.marca] || []).push(item); return acc; }, {});
     const marcas = Object.keys(porMarca).sort();
+
     marcas.forEach(marca => {
         const marcaContainer = document.createElement('div');
         marcaContainer.className = 'marca-container';
         marcaContainer.dataset.marca = marca;
+        
         const tituloMarca = document.createElement('h2');
         tituloMarca.className = 'marca-titulo';
         tituloMarca.textContent = marca;
         marcaContainer.appendChild(tituloMarca);
+        
         const porTipo = porMarca[marca].reduce((acc, item) => { (acc[item.tipo] = acc[item.tipo] || []).push(item); return acc; }, {});
+        
         const tipos = Object.keys(porTipo).sort((a, b) => {
             if (a.toLowerCase().includes('tela')) return -1;
             if (b.toLowerCase().includes('tela')) return 1;
             return a.localeCompare(b);
         });
+        
         tipos.forEach(tipo => {
             const table = document.createElement('table');
             table.dataset.tipo = tipo;
-            table.innerHTML = `<thead>...</thead><tbody>...</tbody>`; // Conteúdo da tabela
+            
+            // ESTA LINHA ESTAVA INCOMPLETA. AGORA ESTÁ CORRETA.
+            table.innerHTML = `<thead><tr><th colspan="3" class="tipo-titulo">${tipo}</th></tr><tr><th>Modelo</th><th>Detalhes / Qualidade</th><th>Preço (R$)</th></tr></thead><tbody>${porTipo[tipo].map(item => `<tr><td>${item.modelo}</td><td>${item.detalhes}</td><td>${item.preco}</td></tr>`).join('')}</tbody>`;
+
             marcaContainer.appendChild(table);
         });
         fragmentoLista.appendChild(marcaContainer);
@@ -80,11 +93,15 @@ function renderizarPagina(itens) {
     containerLista.appendChild(fragmentoLista);
 }
 
-// --- NOVAS FUNÇÕES DE FILTRAGEM COM BOTÕES ---
 
 function popularFiltros(itens) {
-    const marcas = ['todas', ...new Set(itens.map(item => item.marca))].sort((a,b) => a === 'todas' ? -1 : a.localeCompare(b));
-    const tipos = ['todas', ...new Set(itens.map(item => item.tipo))].sort((a,b) => a === 'todas' ? -1 : a.localeCompare(b));
+    const marcasUnicas = [...new Set(itens.map(item => item.marca))];
+    // Garante que 'TODAS' não seja adicionado se não houver marcas
+    const marcas = marcasUnicas.length > 0 ? ['todas', ...marcasUnicas.sort()] : [];
+
+    const tiposUnicos = [...new Set(itens.map(item => item.tipo))];
+    const tipos = tiposUnicos.length > 0 ? ['todas', ...tiposUnicos.sort()] : [];
+
 
     brandFiltersContainer.innerHTML = marcas.map(marca => 
         `<button class="filter-pill ${marca === 'todas' ? 'active' : ''}" data-filter="${marca}">${marca === 'todas' ? 'Todas as Marcas' : marca}</button>`
@@ -99,7 +116,6 @@ function setupEventListeners() {
     brandFiltersContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-pill')) {
             filtroAtivoMarca = e.target.dataset.filter;
-            // Atualiza o visual dos botões
             brandFiltersContainer.querySelector('.active').classList.remove('active');
             e.target.classList.add('active');
             aplicarTodosOsFiltros();
@@ -109,7 +125,6 @@ function setupEventListeners() {
     typeFiltersContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('filter-pill')) {
             filtroAtivoTipo = e.target.dataset.filter;
-            // Atualiza o visual dos botões
             typeFiltersContainer.querySelector('.active').classList.remove('active');
             e.target.classList.add('active');
             aplicarTodosOsFiltros();
@@ -127,18 +142,15 @@ function aplicarTodosOsFiltros() {
         const marcaDoContainer = container.dataset.marca;
         let marcaTemResultados = false;
 
-        // Filtra por Marca
         if (filtroAtivoMarca === 'todas' || marcaDoContainer === filtroAtivoMarca) {
             const tabelas = container.querySelectorAll('table');
             tabelas.forEach(tabela => {
                 const tipoDaTabela = tabela.dataset.tipo;
                 let tabelaTemResultados = false;
-                // Filtra por Tipo
                 if (filtroAtivoTipo === 'todas' || tipoDaTabela === filtroAtivoTipo) {
                     const trs = tabela.tBodies[0].getElementsByTagName('tr');
                     for (const tr of trs) {
                         const textoLinha = tr.textContent || tr.innerText;
-                        // Filtra por Texto da Busca
                         if (textoLinha.toUpperCase().indexOf(buscaTexto) > -1) {
                             tr.style.display = "";
                             tabelaTemResultados = true;
@@ -160,17 +172,9 @@ function aplicarTodosOsFiltros() {
 }
 
 function handleScroll() {
-    // ... (função handleScroll não muda)
     if (window.scrollY > 300) {
         backToTopButton.classList.add('visible');
     } else {
         backToTopButton.classList.remove('visible');
     }
 }
-
-// --- CÓDIGO COMPLETO DAS FUNÇÕES QUE NÃO MUDARAM (para garantir) ---
-// (Omitido para encurtar, mas o código acima contém a estrutura completa e funcional)
-// Colei o código completo no bloco acima para garantir
-// A função renderizarPagina foi resumida no bloco de explicação, mas o código completo está no bloco principal
-// ... o mesmo para carregarDados, etc.
-// O código principal fornecido está 100% completo e funcional.
