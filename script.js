@@ -6,10 +6,10 @@ const loadingIndicator = document.getElementById('loading-indicator');
 const backToTopButton = document.getElementById('back-to-top');
 const filtroMarca = document.getElementById('filtro-marca');
 const filtroTipo = document.getElementById('filtro-tipo');
+const searchInput = document.getElementById('searchInput');
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarDados();
-    document.getElementById('searchInput').addEventListener('keyup', filtrarTabela);
     window.addEventListener('scroll', handleScroll);
 });
 
@@ -21,7 +21,7 @@ async function carregarDados() {
         const data = await response.text();
         const itens = processarDados(data);
         renderizarPagina(itens);
-        popularFiltros(itens); 
+        popularFiltros(itens);
     } catch (error) {
         console.error("Erro ao carregar dados:", error);
         const containerLista = document.getElementById('lista-container');
@@ -34,7 +34,7 @@ async function carregarDados() {
 }
 
 function processarDados(csvData) {
-    const linhas = csvData.trim().split('\n').slice(1);
+    const linhas = csvData.trim().split(/\r?\n/).slice(1); // Mais robusto para diferentes quebras de linha
     return linhas.map(linha => {
         const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         if (colunas.length < 5) return null;
@@ -45,7 +45,7 @@ function processarDados(csvData) {
             detalhes: colunas[3]?.trim() || '',
             preco: colunas[4]?.trim() || '0'
         };
-    }).filter(item => item && item.marca && item.modelo); // Filtro um pouco mais robusto
+    }).filter(item => item && item.marca && item.modelo);
 }
 
 function renderizarPagina(itens) {
@@ -99,15 +99,69 @@ function popularFiltros(itens) {
         filtroTipo.innerHTML += `<option value="${tipo}">${tipo}</option>`;
     });
 
-    filtroMarca.addEventListener('change', aplicarFiltros);
-    filtroTipo.addEventListener('change', aplicarFiltros);
+    // Eventos que chamam a nova função unificada
+    filtroMarca.addEventListener('change', aplicarTodosOsFiltros);
+    filtroTipo.addEventListener('change', aplicarTodosOsFiltros);
+    searchInput.addEventListener('keyup', aplicarTodosOsFiltros);
 }
 
-function aplicarFiltros() {
+// --- FUNÇÃO DE FILTRAGEM UNIFICADA E CORRIGIDA ---
+function aplicarTodosOsFiltros() {
     const marcaSelecionada = filtroMarca.value;
     const tipoSelecionado = filtroTipo.value;
+    const buscaTexto = searchInput.value.toUpperCase();
 
     const containersDeMarca = document.querySelectorAll('.marca-container');
 
     containersDeMarca.forEach(container => {
-        const marcaDo
+        const marcaDoContainer = container.dataset.marca;
+        let marcaTemResultados = false;
+
+        // 1. Filtra por Marca
+        if (marcaSelecionada === 'todas' || marcaDoContainer === marcaSelecionada) {
+            const tabelas = container.querySelectorAll('table');
+            
+            tabelas.forEach(tabela => {
+                const tipoDaTabela = tabela.dataset.tipo;
+                let tabelaTemResultados = false;
+
+                // 2. Filtra por Tipo de Peça
+                if (tipoSelecionado === 'todas' || tipoDaTabela === tipoSelecionado) {
+                    const trs = tabela.tBodies[0].getElementsByTagName('tr');
+                    
+                    for (const tr of trs) {
+                        const textoLinha = tr.textContent || tr.innerText;
+                        
+                        // 3. Filtra por Texto da Busca
+                        if (textoLinha.toUpperCase().indexOf(buscaTexto) > -1) {
+                            tr.style.display = "";
+                            tabelaTemResultados = true; // Marca que esta tabela tem pelo menos uma linha visível
+                        } else {
+                            tr.style.display = "none";
+                        }
+                    }
+                }
+                
+                // Decide se a tabela (tipo) inteira deve ser visível
+                if (tabelaTemResultados) {
+                    tabela.style.display = "";
+                    marcaTemResultados = true; // Marca que esta marca tem pelo menos uma tabela visível
+                } else {
+                    tabela.style.display = "none";
+                }
+            });
+        }
+        
+        // Decide se o container (marca) inteiro deve ser visível
+        container.style.display = marcaTemResultados ? "" : "none";
+    });
+}
+
+
+function handleScroll() {
+    if (window.scrollY > 300) {
+        backToTopButton.classList.add('visible');
+    } else {
+        backToTopButton.classList.remove('visible');
+    }
+}
