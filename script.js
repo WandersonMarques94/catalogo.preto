@@ -1,4 +1,4 @@
-// VERSÃO ESTÁVEL E CORRIGIDA
+// VERSÃO ESTÁVEL E FINAL
 
 const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTRm6lEWk_MP0PSDmMNOpHwmu7fiQM4TisoWz78fkEkG_nsG-aeOoU-yKq4IEM9TUFwcPVdE93dKum0/pub?output=csv';
 
@@ -9,6 +9,10 @@ const searchInput = document.getElementById('searchInput');
 const brandFiltersContainer = document.getElementById('brand-filters');
 const typeFiltersContainer = document.getElementById('type-filters');
 
+// NOVOS ELEMENTOS DO CABEÇALHO RETRÁTIL
+const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+const collapsibleFilters = document.getElementById('collapsible-filters');
+
 let filtroAtivoMarca = 'todas';
 let filtroAtivoTipo = 'todas';
 
@@ -18,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarDados() {
+    // ... (função não muda)
     loadingIndicator.style.display = 'flex';
     try {
         const response = await fetch(urlPlanilha);
@@ -27,12 +32,55 @@ async function carregarDados() {
         renderizarPagina(itens);
         popularFiltros(itens);
         setupEventListeners();
-    } catch (error) {
-        console.error("Erro Crítico:", error);
-        loadingIndicator.innerHTML = '<p>Ocorreu um erro ao carregar os dados. Tente recarregar a página.</p>';
-    }
+    } catch (error) { console.error("Erro:", error); } 
+    finally { loadingIndicator.style.display = 'none'; }
 }
 
+function processarDados(csvData) {
+    // ... (função não muda)
+}
+function renderizarPagina(itens) {
+    // ... (função não muda)
+}
+function popularFiltros(itens) {
+    // ... (função não muda)
+}
+
+function setupEventListeners() {
+    // Listener para o botão de expandir/retrair
+    toggleFiltersBtn.addEventListener('click', () => {
+        toggleFiltersBtn.classList.toggle('open');
+        collapsibleFilters.classList.toggle('open');
+    });
+
+    brandFiltersContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            filtroAtivoMarca = e.target.dataset.filter;
+            brandFiltersContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            aplicarTodosOsFiltros();
+        }
+    });
+    typeFiltersContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            filtroAtivoTipo = e.target.dataset.filter;
+            typeFiltersContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            aplicarTodosOsFiltros();
+        }
+    });
+    searchInput.addEventListener('keyup', aplicarTodosOsFiltros);
+}
+
+function aplicarTodosOsFiltros() {
+    // ... (função não muda)
+}
+function handleScroll() {
+    // ... (função não muda)
+}
+
+
+// --- CÓDIGO COMPLETO DAS FUNÇÕES QUE NÃO MUDARAM ---
 function processarDados(csvData) {
     const linhas = csvData.trim().split(/\r?\n/).slice(1);
     return linhas.map(linha => {
@@ -47,14 +95,12 @@ function processarDados(csvData) {
         };
     }).filter(item => item && item.marca && item.modelo && item.marca.length > 0);
 }
-
 function renderizarPagina(itens) {
     const containerLista = document.getElementById('lista-container');
     containerLista.innerHTML = '';
     const fragmentoLista = document.createDocumentFragment();
     const porMarca = itens.reduce((acc, item) => { (acc[item.marca] = acc[item.marca] || []).push(item); return acc; }, {});
     const marcas = Object.keys(porMarca).sort();
-
     marcas.forEach(marca => {
         const marcaContainer = document.createElement('div');
         marcaContainer.className = 'marca-container';
@@ -78,15 +124,12 @@ function renderizarPagina(itens) {
         fragmentoLista.appendChild(marcaContainer);
     });
     containerLista.appendChild(fragmentoLista);
-    loadingIndicator.style.display = 'none';
 }
-
 function popularFiltros(itens) {
     const marcasUnicas = [...new Set(itens.map(item => item.marca))];
     const marcas = marcasUnicas.length > 0 ? ['todas', ...marcasUnicas.sort()] : [];
     const tiposUnicos = [...new Set(itens.map(item => item.tipo))];
     const tipos = tiposUnicos.length > 0 ? ['todas', ...tiposUnicos.sort()] : [];
-
     brandFiltersContainer.innerHTML = marcas.map(marca => 
         `<button class="filter-pill ${marca === 'todas' ? 'active' : ''}" data-filter="${marca}">${marca === 'todas' ? 'Todas as Marcas' : marca}</button>`
     ).join('');
@@ -94,40 +137,17 @@ function popularFiltros(itens) {
         `<button class="filter-pill ${tipo === 'todas' ? 'active' : ''}" data-filter="${tipo}">${tipo === 'todas' ? 'Todos os Tipos' : tipo}</button>`
     ).join('');
 }
-
-function setupEventListeners() {
-    brandFiltersContainer.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            filtroAtivoMarca = e.target.dataset.filter;
-            brandFiltersContainer.querySelector('.active').classList.remove('active');
-            e.target.classList.add('active');
-            aplicarTodosOsFiltros();
-        }
-    });
-    typeFiltersContainer.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            filtroAtivoTipo = e.target.dataset.filter;
-            typeFiltersContainer.querySelector('.active').classList.remove('active');
-            e.target.classList.add('active');
-            aplicarTodosOsFiltros();
-        }
-    });
-    searchInput.addEventListener('keyup', aplicarTodosOsFiltros);
-}
-
 function aplicarTodosOsFiltros() {
     const buscaTexto = searchInput.value.toUpperCase();
     document.querySelectorAll('.marca-container').forEach(containerMarca => {
         const marcaAtual = containerMarca.dataset.marca;
         let marcaTemItensVisiveis = false;
         const marcaPassaFiltro = (filtroAtivoMarca === 'todas' || marcaAtual === filtroAtivoMarca);
-
         if (marcaPassaFiltro) {
             containerMarca.querySelectorAll('table').forEach(tabelaTipo => {
                 const tipoAtual = tabelaTipo.dataset.tipo;
                 let tipoTemItensVisiveis = false;
                 const tipoPassaFiltro = (filtroAtivoTipo === 'todas' || tipoAtual === filtroAtivoTipo);
-
                 if (tipoPassaFiltro) {
                     tabelaTipo.querySelectorAll('tbody tr').forEach(linha => {
                         const textoLinha = linha.textContent.toUpperCase();
@@ -150,11 +170,10 @@ function aplicarTodosOsFiltros() {
         containerMarca.style.display = marcaTemItensVisiveis ? "" : "none";
     });
 }
-
 function handleScroll() {
     if (window.scrollY > 300) {
         backToTopButton.classList.add('visible');
     } else {
-        backToTopButton.classList.remove('active');
+        backToTopButton.classList.remove('visible');
     }
 }
