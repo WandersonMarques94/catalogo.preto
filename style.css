@@ -163,3 +163,79 @@ td {
     padding: 12px 20px;
     border-bottom: 1px solid var(--color-border); /* Apenas borda inferior */
     border-right: 1px solid var(--color-border); /* Borda direita para separar colunas */
+    text-align: left;
+}
+td:last-child {
+    border-right: none; /* Remove borda direita da última coluna */
+}
+tbody tr:nth-child(even) { background-color: var(--color-primary-bg); } /* Fundo suave para linhas pares */
+tbody tr:hover { background-color: hsl(210, 10%, 92%); /* Leve destaque no hover */ }
+
+
+.site-footer-info {
+    background-color: var(--color-footer-bg);
+    color: hsl(210, 5%, 70%); /* Texto mais claro no rodapé */
+    padding: 40px 20px; /* Mais padding */
+    text-align: center;
+    margin-top: 60px; /* Mais margem superior */
+    font-size: 0.9em;
+}
+.site-footer-info h2 {
+    color: white;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+.site-footer-info p { margin: 8px 0; }
+
+
+/* Botões flutuantes */
+.floating-button {
+    position: fixed; width: 55px; height: 55px; /* Um pouco menores */
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25); /* Sombra mais suave */
+    z-index: 1500; transition: transform 0.2s ease, opacity 0.3s ease;
+}
+.floating-button:hover { transform: translateY(-3px); } /* Efeito de elevação */
+.floating-button svg { width: 28px; height: 28px; } /* Ícones menores */
+.whatsapp { bottom: 25px; right: 25px; background-color: #25D366; }
+.back-to-top { bottom: 95px; right: 25px; background-color: var(--color-table-header-bg); opacity: 0; visibility: hidden; }
+.back-to-top.visible { opacity: 1; visibility: visible; }
+
+/* MEDIA QUERIES para Responsividade */
+@media (max-width: 768px) {
+    .site-header h1 { font-size: 1.4em; margin-bottom: 15px; }
+    .search-container { margin-bottom: 15px; }
+    .search-container input { padding: 12px 15px; font-size: 0.95em; }
+    .filter-group { gap: 8px; margin-bottom: 10px; }
+    .filter-pill { padding: 6px 14px; font-size: 0.85em; }
+    main { margin: 20px auto; padding: 0 15px; }
+    .marca-container { padding: 15px; margin-bottom: 30px; }
+    .marca-titulo { font-size: 1.8em; margin-bottom: 20px; }
+    table { font-size: 0.9em; }
+    thead th, td { padding: 10px 12px; }
+    .tipo-titulo { font-size: 1em; }
+    .site-footer-info { padding: 30px 15px; font-size: 0.8em; }
+    .site-footer-info h2 { font-size: 1.5em; margin-bottom: 15px; }
+    .floating-button { width: 50px; height: 50px; bottom: 20px; right: 20px; }
+    .floating-button svg { width: 24px; height: 24px; }
+    .back-to-top { bottom: 80px; right: 20px; }
+}
+
+@media (max-width: 480px) {
+    .site-header { padding: 15px 10px; }
+    .site-header h1 { font-size: 1.2em; margin-bottom: 10px; }
+    .search-container input { padding: 10px 10px; font-size: 0.9em; }
+    .filter-group { gap: 6px; margin-bottom: 8px; }
+    .filter-pill { padding: 5px 12px; font-size: 0.8em; }
+    main { padding: 0 10px; margin: 15px auto; }
+    .marca-container { padding: 10px; margin-bottom: 20px; }
+    .marca-titulo { font-size: 1.5em; margin-bottom: 15px; }
+    table { font-size: 0.8em; }
+    thead th, td { padding: 8px 10px; }
+    .tipo-titulo { font-size: 0.9em; }
+    .floating-button { width: 45px; height: 45px; bottom: 15px; right: 15px; }
+    .floating-button svg { width: 22px; height: 22px; }
+    .back-to-top { bottom: 70px; right: 15px; }
+}
