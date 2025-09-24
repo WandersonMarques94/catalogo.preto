@@ -14,41 +14,28 @@
 
     <header class="site-header">
         <h1>Catálogo de Preços de Peças</h1>
-        
-        <div class="search-wrapper">
+        <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar por modelo ou peça...">
-            <button id="open-filters-modal-btn" aria-label="Abrir filtros avançados">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#5f6368"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
-            </button>
         </div>
+        <div id="brand-filters" class="filter-group"></div>
+        <div id="type-filters" class="filter-group"></div>
     </header>
 
     <main id="lista-container"></main>
 
-    <div id="filter-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Filtros Avançados</h2>
-                <button class="close-modal-btn" aria-label="Fechar filtros">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h4>Marca</h4>
-                <div id="modal-brand-filters" class="filter-group"></div>
-                <h4>Tipo de Peça</h4>
-                <div id="modal-type-filters" class="filter-group"></div>
-            </div>
-            <div class="modal-footer">
-                <button id="clear-filters-btn">Limpar Filtros</button>
-                <button id="apply-filters-btn">Aplicar Filtros</button>
-            </div>
-        </div>
-    </div>
-
     <footer class="site-footer-info">
-        </footer>
+        <h2>NOME DA SUA EMPRESA AQUI</h2>
+        <p>Endereço: SEU ENDEREÇO COMPLETO AQUI</p>
+        <p>Telefone: SEU TELEFONE AQUI | Horário: SEU HORÁRIO DE FUNCIONAMENTO</p>
+        <p>© 2025 - Todos os direitos reservados.</p>
+    </footer>
 
-    <a href="https://wa.me/55SEUNUMERODEWHATSAPPAQUI" class="floating-button whatsapp" target="_blank" rel="noopener noreferrer">...</a>
-    <a href="#" id="back-to-top" class="floating-button back-to-top" title="Voltar ao topo">...</a>
+    <a href="https://wa.me/55SEUNUMERODEWHATSAPPAQUI" class="floating-button whatsapp" target="_blank" rel="noopener noreferrer">
+        <svg fill="#fff" viewBox="0 0 32 32"><path d=" M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63zm-4.425 1.562c.63 0 1.26-.63 1.26-1.26 0-.63-.63-1.26-1.26-1.26-.63 0-1.26.63-1.26 1.26 0 .63.63 1.26 1.26 1.26zm-4.425-1.562c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63c0 .63-.63 1.39-1.518 1.39a.63.63 0 0 1-.63-.63c0-1.562 1.518-2.19 1.518-2.19a.63.63 0 0 1 .63.63z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+    </a>
+    <a href="#" id="back-to-top" class="floating-button back-to-top" title="Voltar ao topo">
+        <svg fill="#fff" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+    </a>
 
     <script src="script.js"></script>
 </body>
