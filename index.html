@@ -12,35 +12,15 @@
         <p>Carregando lista de preços...</p>
     </div>
 
-    <div id="filter-drawer" class="drawer">
-        <div class="drawer-header">
-            <h3>Filtros</h3>
-            <button id="close-filter-btn" aria-label="Fechar filtros">&times;</button>
-        </div>
-        <div class="drawer-content">
-            <label for="filtro-marca">Marca</label>
-            <select id="filtro-marca" aria-label="Filtrar por Marca"></select>
-            
-            <label for="filtro-tipo">Tipo de Peça</label>
-            <select id="filtro-tipo" aria-label="Filtrar por Tipo"></select>
-
-            <button id="clear-filters-btn">Limpar Filtros</button>
-        </div>
-    </div>
-    <div id="overlay"></div>
-
     <header class="site-header">
         <h1>Catálogo de Preços de Peças</h1>
         
-        <div class="controls-container">
-            <button id="open-filter-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
-                Filtrar
-            </button>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar por modelo ou peça...">
-            </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar por modelo ou peça...">
         </div>
+
+        <div id="brand-filters" class="filter-group"></div>
+        <div id="type-filters" class="filter-group"></div>
     </header>
 
     <main id="lista-container">
@@ -53,10 +33,8 @@
         <p>© 2025 - Todos os direitos reservados.</p>
     </footer>
 
-    <a href="https://wa.me/55SEUNUMERODEWHATSAPPAQUI" class="floating-button whatsapp" target="_blank" rel="noopener noreferrer">
-        </a>
-    <a href="#" id="back-to-top" class="floating-button back-to-top" title="Voltar ao topo">
-        </a>
+    <a href="https://wa.me/55SEUNUMERODEWHATSAPPAQUI" class="floating-button whatsapp" target="_blank" rel="noopener noreferrer">...</a>
+    <a href="#" id="back-to-top" class="floating-button back-to-top" title="Voltar ao topo">...</a>
 
     <script src="script.js"></script>
 </body>
