@@ -1,82 +1,165 @@
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    background-color: #f8f9fa;
-    color: #212529;
+/* Definição de variáveis CSS para as cores */
+:root {
+    --color-primary-bg: hsl(210, 10%, 98%); /* Quase branco */
+    --color-secondary-text: hsl(210, 5%, 25%); /* Grafite escuro */
+    --color-accent: hsl(210, 90%, 50%); /* Azul vibrante */
+    --color-border: hsl(210, 10%, 85%); /* Cinza claro para bordas */
+    --color-header-bg: hsl(210, 10%, 20%); /* Cinza escuro para o cabeçalho */
+    --color-footer-bg: hsl(210, 10%, 20%); /* Cinza escuro para o rodapé */
+    --color-table-header-bg: hsl(210, 10%, 30%); /* Um tom um pouco mais claro para cabeçalhos de tabela */
+    --color-pill-bg: hsl(210, 10%, 40%); /* Cinza escuro para pills não ativas */
 }
+
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Fonte moderna e limpa */
+    margin: 0;
+    background-color: var(--color-primary-bg);
+    color: var(--color-secondary-text);
+    line-height: 1.6;
+}
+
 #loading-indicator {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     display: flex; justify-content: center; align-items: center;
-    z-index: 2000; font-size: 1.5em; color: #343a40;
+    z-index: 2000; font-size: 1.5em; color: var(--color-secondary-text);
+    animation: fade-in 0.5s ease-out;
 }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+
 .site-header {
-    background-color: #343a40;
+    background-color: var(--color-header-bg);
     color: white;
-    padding: 20px 15px;
+    padding: 25px 15px; /* Mais padding */
     text-align: center;
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
 }
+
 .site-header h1 {
-    margin: 0 0 15px 0;
-    font-size: 1.5em;
+    margin: 0 0 20px 0;
+    font-size: 1.8em; /* Fonte maior */
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
+
 .search-container {
     max-width: 600px;
-    margin: 0 auto 15px auto;
+    margin: 0 auto 20px auto;
 }
 .search-container input {
     width: 100%;
-    padding: 12px;
+    padding: 14px 20px; /* Mais padding */
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px; /* Bordas mais arredondadas */
+    font-size: 1em;
     box-sizing: border-box;
+    background-color: hsl(210, 10%, 25%); /* Fundo da busca mais escuro */
+    color: white;
+    transition: box-shadow 0.3s ease;
 }
+.search-container input::placeholder {
+    color: hsl(210, 5%, 60%); /* Placeholder mais claro */
+}
+.search-container input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-accent); /* Borda azul ao focar */
+}
+
+
+/* Estilos dos Filtros de Botão */
 .filter-group {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
+    gap: 10px; /* Espaçamento maior entre os botões */
     padding: 0 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 .filter-pill {
-    padding: 6px 14px;
-    font-size: 14px;
+    padding: 8px 18px; /* Mais padding */
+    font-size: 0.95em; /* Fonte ligeiramente maior */
     font-weight: 500;
-    background-color: #6c757d;
+    background-color: var(--color-pill-bg);
     color: white;
-    border: 1px solid #6c757d;
-    border-radius: 20px;
+    border: 1px solid var(--color-pill-bg);
+    border-radius: 25px; /* Completamente arredondado */
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
 }
 .filter-pill:hover {
-    background-color: #5a6268;
+    background-color: hsl(210, 10%, 50%); /* Mais claro no hover */
+    transform: translateY(-2px); /* Efeito de elevação sutil */
 }
 .filter-pill.active {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para o ativo */
+}
+
+
+main {
+    max-width: 1100px; /* Aumenta a largura máxima do conteúdo principal */
+    margin: 30px auto; /* Mais margem */
+    padding: 0 25px;
+}
+
+.marca-container {
+    margin-bottom: 40px; /* Mais espaçamento entre as marcas */
+    background-color: white;
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra mais suave e elegante */
+    padding: 20px;
+}
+
+.marca-titulo {
+    font-size: 2.5em; /* Título maior */
+    color: var(--color-secondary-text);
+    border-bottom: 2px solid var(--color-border); /* Borda mais discreta */
+    padding-bottom: 15px;
+    margin-top: 10px; /* Ajuste a margem superior */
+    margin-bottom: 30px; /* Ajuste a margem inferior */
+    font-weight: 700;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate; /* Permite bordas arredondadas na tabela */
+    border-spacing: 0; /* Remove espaçamento padrão entre células */
+    margin-bottom: 30px;
+    overflow: hidden; /* Garante que os cantos arredondados funcionem */
+    border-radius: 8px; /* Bordas arredondadas para a tabela */
+}
+table thead th:first-child { border-top-left-radius: 8px; }
+table thead th:last-child { border-top-right-radius: 8px; }
+table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
+table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
+
+
+thead th {
+    padding: 15px 20px; /* Mais padding */
+    border: none; /* Remove bordas internas */
+    text-align: left;
+    font-weight: 600;
     color: white;
 }
-main { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
-.marca-container { margin-bottom: 20px; }
-.marca-titulo { font-size: 2.2em; color: #343a40; border-bottom: 3px solid #dee2e6; padding-bottom: 10px; margin-top: 40px; margin-bottom: 25px; }
-table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
-thead th { padding: 12px 15px; border: 1px solid #dee2e6; text-align: left; font-weight: 600; }
-.tipo-titulo { background-color: #495057; color: white; font-size: 1.2em; text-align: center; font-weight: bold; }
-td { padding: 12px 15px; border: 1px solid #dee2e6; text-align: left; }
-tbody tr:nth-child(even) { background-color: #f8f9fa; }
-tbody tr:hover { background-color: #e2e6ea; }
-.site-footer-info { background-color: #343a40; color: #adb5bd; padding: 30px 20px; text-align: center; margin-top: 50px; }
-.site-footer-info h2 { color: white; margin-top: 0; margin-bottom: 15px; }
-.site-footer-info p { margin: 5px 0; font-size: 0.9em; }
-.floating-button { position: fixed; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 1500; transition: transform 0.2s; }
-.floating-button:hover { transform: scale(1.1); }
-.floating-button svg { width: 32px; height: 32px; }
-.whatsapp { bottom: 20px; right: 20px; background-color: #25D366; }
-.back-to-top { bottom: 90px; right: 20px; background-color: #6c757d; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
-.back-to-top.visible { opacity: 1; visibility: visible; }
+.tipo-titulo {
+    background-color: var(--color-table-header-bg); /* Cor do cabeçalho de tipo */
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+}
+thead tr:nth-child(2) th { /* Estilo para a segunda linha do thead */
+    background-color: hsl(210, 10%, 40%); /* Um tom diferente para diferenciar */
+}
+
+td {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color-border); /* Apenas borda inferior */
+    border-right: 1px solid var(--color-border); /* Borda direita para separar colunas */
