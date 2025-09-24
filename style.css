@@ -195,12 +195,25 @@ tbody tr:hover { background-color: hsl(210, 10%, 92%); }
     z-index: 1500; transition: transform 0.2s ease, opacity 0.3s ease;
 }
 .floating-button:hover { transform: translateY(-3px); }
-.floating-button svg { width: 28px; height: 28px; }
+.floating-button svg {
+    /* O tamanho do SVG é controlado aqui para garantir consistência */
+}
 .whatsapp { bottom: 25px; right: 25px; background-color: #25D366; }
 .back-to-top { bottom: 95px; right: 25px; background-color: var(--color-table-header-bg); opacity: 0; visibility: hidden; }
 .back-to-top.visible { opacity: 1; visibility: visible; }
+
+/* MEDIA QUERIES COM AJUSTES DE TAMANHO */
 @media (max-width: 768px) {
     main { padding: 0 10px; }
     .marca-container { padding: 10px; }
+    .marca-titulo { font-size: 1.6em; } /* Tamanho do título da marca reduzido */
+    table { font-size: 0.85em; } /* Fonte da tabela reduzida */
+    thead th, td { padding: 10px 8px; } /* Padding das células reduzido */
+    .tipo-titulo { font-size: 1em; }
 }
-
+@media (max-width: 480px) {
+    .marca-titulo { font-size: 1.4em; }
+    table { font-size: 0.75em; } /* Fonte ainda menor para telas pequenas */
+    thead th, td { padding: 8px 6px; } /* Padding ainda menor */
+    .tipo-titulo { font-size: 0.9em; }
+}
