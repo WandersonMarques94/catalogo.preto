@@ -196,8 +196,9 @@ tbody tr:hover { background-color: hsl(210, 10%, 92%); }
     color: white; /* GARANTE QUE A COR DO ÍCONE (currentColor) SEJA BRANCA */
 }
 .floating-button:hover { transform: translateY(-3px); }
-.floating-button svg {
-    /* O tamanho agora é controlado pelos atributos no próprio SVG (height/width) */
+.floating-button img {
+    width: 28px;
+    height: 28px;
 }
 .whatsapp { bottom: 25px; right: 25px; background-color: #25D366; }
 .back-to-top { bottom: 95px; right: 25px; background-color: var(--color-table-header-bg); opacity: 0; visibility: hidden; }
