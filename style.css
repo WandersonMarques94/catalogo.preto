@@ -80,9 +80,13 @@ body {
     overflow: hidden;
     transition: max-height 0.4s ease-in-out;
     background-color: var(--color-header-bg);
+    will-change: max-height;
 }
 .collapsible-content.open {
     max-height: 500px;
+}
+/* NOVA REGRA PARA O WRAPPER */
+.collapsible-wrapper {
     padding-top: 20px;
 }
 .filter-group {
@@ -193,10 +197,10 @@ tbody tr:hover { background-color: hsl(210, 10%, 92%); }
     border-radius: 50%; display: flex; justify-content: center; align-items: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     z-index: 1500; transition: transform 0.2s ease, opacity 0.3s ease;
-    color: white; /* GARANTE QUE A COR DO ÍCONE (currentColor) SEJA BRANCA */
+    color: white; 
 }
 .floating-button:hover { transform: translateY(-3px); }
-.floating-button img {
+.floating-button img, .floating-button svg {
     width: 28px;
     height: 28px;
 }
@@ -204,7 +208,6 @@ tbody tr:hover { background-color: hsl(210, 10%, 92%); }
 .back-to-top { bottom: 95px; right: 25px; background-color: var(--color-table-header-bg); opacity: 0; visibility: hidden; }
 .back-to-top.visible { opacity: 1; visibility: visible; }
 
-/* MEDIA QUERIES COM AJUSTES DE TAMANHO */
 @media (max-width: 768px) {
     main { padding: 0 10px; }
     .marca-container { padding: 10px; }
